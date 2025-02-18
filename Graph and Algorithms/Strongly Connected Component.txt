@@ -1,0 +1,132 @@
+Problem Statement
+-----------------
+
+
+The cities in a country are connected as a graph. There should be a path between all pairs of cities. We have to find the maximal strongly connected cities. Given a set of vertices and edges, write a program to identify the strongly connected components in a graph.
+
+Strongly connected components in a graph are sets of vertices where each vertex in the set can be reached from every other vertex in the same set by following directed edges.
+
+Input Format 
+------------
+The first line consists of the number of edges n.
+
+The next n lines consist of two integers: a and b representing directed edges from vertex a to vertex b.
+
+Output Format
+------------- 
+The output prints the strongly connected components in the graph, each on a separate line. 
+
+The components are printed as space-separated integers representing the vertices in each component.
+
+
+
+Refer to the sample output for the formatting specifications.
+
+Constraints 
+------------
+The given test cases fall under the following specifications:
+
+0 ≤ a, b < n
+
+Sample Input
+------------   
+5
+1 0
+0 2
+2 1
+0 3
+3 4
+
+Sample Output
+-------------
+0 1 2 
+3 
+4 
+
+
+
+Solution
+---------
+
+import java.util.*;
+
+class StronglyConnectedComponents {
+    private static final int N = 10;  // Max number of nodes
+    private static List<List<Integer>> edges = new ArrayList<>();
+    private static List<List<Integer>> redges = new ArrayList<>();
+
+    // DFS to fill the stack based on finishing order
+    private static void dfs1(int currNode, boolean[] visited, List<Integer> topo) {
+        visited[currNode] = true;
+
+        for (int neighbor : edges.get(currNode)) {
+            if (!visited[neighbor]) {
+                dfs1(neighbor, visited, topo);
+            }
+        }
+        topo.add(currNode);
+    }
+
+    // DFS for finding SCCs
+    private static void dfs(int currNode, boolean[] visited, List<Integer> scc) {
+        visited[currNode] = true;
+        scc.add(currNode);
+
+        for (int neighbor : redges.get(currNode)) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, visited, scc);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int m = sc.nextInt(); // Number of edges
+
+        // Initialize adjacency lists
+        for (int i = 0; i <= N; i++) {
+            edges.add(new ArrayList<>());
+            redges.add(new ArrayList<>());
+        }
+
+        // Input edges and build graph
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            edges.get(u).add(v);
+            redges.get(v).add(u);
+        }
+
+        int mx = m;
+        boolean[] visited = new boolean[mx + 1];
+        List<Integer> topo = new ArrayList<>();
+
+        // Step 1: Perform DFS to fill the topo order
+        for (int i = 0; i < mx; i++) {
+            if (!visited[i]) {
+                dfs1(i, visited, topo);
+            }
+        }
+
+        // Reverse the topological order
+        Collections.reverse(topo);
+
+        // Step 2: Process in order of topo sort to find SCCs
+        boolean[] visited2 = new boolean[mx + 1];
+
+        for (int node : topo) {
+            if (!visited2[node]) {
+                List<Integer> scc = new ArrayList<>();
+                dfs(node, visited2, scc);
+
+                // Print the SCC
+                for (int x : scc) {
+                    System.out.print(x + " ");
+                }
+                System.out.println();
+            }
+        }
+
+        sc.close();
+    }
+}
