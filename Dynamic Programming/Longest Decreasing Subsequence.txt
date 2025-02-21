@@ -1,0 +1,103 @@
+Scenario:
+---------
+You are a traffic analyst working for a city transportation department. The city has several highway speed checkpoints that record the speed of vehicles at different time intervals throughout the day.
+
+Your manager asks you to analyze traffic congestion by finding the longest sequence of decreasing speeds in a day. This will help determine the time period when vehicles gradually slowed down, possibly due to traffic jams or road conditions.
+
+Task:
+-----
+Write a Java program that takes n (the number of speed checkpoints) and an array representing the speed of vehicles recorded at each checkpoint. Your program should find and print the longest sequence where speeds are strictly decreasing over consecutive checkpoints.
+
+Input Format:
+-------------
+The first line contains an integer n (number of checkpoints).
+The second line contains n space-separated integers representing the speed of vehicles recorded at each checkpoint.
+
+Output Format:
+--------------
+Print: "The longest sequence of decreasing speeds is X" (where X is the length of the LDS).
+
+Example 1:
+-----------
+Input:
+------
+8  
+70 65 60 55 50 45 40 35  
+
+Output:
+-------
+The longest sequence of decreasing speeds is 8
+
+Explanation:
+--------------
+Since the speeds are already in a strictly decreasing order, the longest decreasing subsequence includes all elements.
+
+Example 2:
+----------
+Input:
+------
+10  
+100 98 95 92 97 90 88 85 80 75  
+
+Output:
+---------
+The longest sequence of decreasing speeds is 5
+
+Explanation:
+------------
+One of the longest decreasing subsequences is {97, 90, 88, 85, 80, 75}.
+
+
+
+Solution
+---------
+import java.util.Scanner;
+import java.util.Arrays;
+
+class LongestDecreasingSubsequence {
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+
+        // Read the size of the array
+        int n = in.nextInt();
+        int arr[] = new int[n];
+
+        // Variable to store the maximum length of LDS
+        int max_length = 1;
+
+        // Read the array elements
+        for (int i = 0; i < n; i++) {
+            arr[i] = in.nextInt();
+        }
+
+        // LDS array initialized with 1 (each element is its own subsequence)
+        int lds[] = new int[n];
+        Arrays.fill(lds, 1);
+
+        // Compute LDS for each index
+        for (int i = 1; i < n; i++) {  
+            for (int j = 0; j < i; j++) {  
+                // If arr[i] is smaller than arr[j], it can extend the LDS of arr[j]
+                if (arr[i] < arr[j] && lds[i] < lds[j] + 1) {
+                    lds[i] = lds[j] + 1;
+
+                    // Update max_length if we found a longer LDS
+                    if (lds[i] > max_length) {
+                        max_length = lds[i];
+                    }
+                }
+            }
+        }
+
+        // Print the length of the longest decreasing subsequence
+        System.out.println("The length is " + max_length);
+
+        // Print the LDS array to understand the LDS length at each index
+        for (int i = 0; i < n; i++) {
+            System.out.print(lds[i] + " ");
+        }
+
+        in.close();
+    }
+}
+
