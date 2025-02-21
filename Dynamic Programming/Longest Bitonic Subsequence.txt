@@ -1,0 +1,96 @@
+Statement
+---------
+Given an array of integers, the task is to find the length of the longest strict bitonic subsequence. A bitonic subsequence is defined as a subsequence that is either strictly increasing and then strictly decreasing, or strictly decreasing.
+
+Example:
+--------
+Input: arr[] = {1, 5, 2, 3, 4, 5, 3, 2}
+
+Output: 6
+
+The Longest Strict Bitonic Subsequence is:
+{1, 2, 3, 4, 3, 2}.
+
+
+
+Input: arr[] = {1, 2, 5, 3, 6, 7, 4, 6, 5}
+Output: 5
+
+Input Format :
+---------------
+The first line of input consists of an integer n representing the size of the array.
+
+The second line of input consists of n space-separated integers representing the elements of the array.
+
+Output Format :
+-----------------
+The output should display "Longest length strict bitonic subsequence = " followed by the integer representing the length of the longest strict bitonic subsequence.
+
+
+
+Refer to the sample output for the formatting specifications.
+
+Sample testcases :
+------------------
+8
+1 5 2 3 4 5 3 2
+Longest length strict bitonic subsequence = 6
+
+
+import java.util.*;
+
+public class LongestBitonicSubsequence {
+    public static int findLongestBitonicSubsequence(int[] arr) {
+        int n = arr.length;
+        if (n == 0) return 0;
+
+        int[] LIS = new int[n]; // Longest Increasing Subsequence
+        int[] LDS = new int[n]; // Longest Decreasing Subsequence
+
+        // Step 1: Compute LIS for each index
+        Arrays.fill(LIS, 1);
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (arr[i] > arr[j] && LIS[i] < LIS[j] + 1) {
+                    LIS[i] = LIS[j] + 1;
+                }
+            }
+        }
+
+        // Step 2: Compute LDS for each index (from right to left)
+        Arrays.fill(LDS, 1);
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = n - 1; j > i; j--) {
+                if (arr[i] > arr[j] && LDS[i] < LDS[j] + 1) {
+                    LDS[i] = LDS[j] + 1;
+                }
+            }
+        }
+
+        // Step 3: Find the maximum (LIS[i] + LDS[i] - 1)
+        int maxBitonic = 0;
+        for (int i = 0; i < n; i++) {
+            maxBitonic = Math.max(maxBitonic, LIS[i] + LDS[i] - 1);
+        }
+
+        return maxBitonic;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Input the size of the array
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+
+        // Input the array elements
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+        }
+
+        // Compute and print the result
+        System.out.println("Longest length strict bitonic subsequence = " + findLongestBitonicSubsequence(arr));
+
+        sc.close();
+    }
+}
