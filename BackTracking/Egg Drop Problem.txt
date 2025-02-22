@@ -1,0 +1,130 @@
+Egg Drop Problem
+------------------
+
+import java.util.Scanner;
+
+class EggDroppingRecursive {
+    
+    static int eggDrop(int eggs, int floors) {
+        
+        if (floors == 0 || floors == 1) return floors; 
+        if (eggs == 1) return floors; 
+
+        int minDrops = 999;
+
+        for (int i = 1; i <= floors; i ++) {
+            int worstCase = 1 + Math.max(eggDrop(eggs - 1, i - 1), 
+eggDrop(eggs, floors - i));
+
+            minDrops = Math.min(minDrops, worstCase);
+        }
+
+        return minDrops;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int eggs = sc.nextInt(); 
+        int floors = sc.nextInt(); 
+
+        System.out.println(eggDrop(eggs, floors)); 
+    }
+}
+
+
+
+
+Linear Approach
+----------------
+
+import java.util.*;
+
+class EggDrop {
+    static int[][] dp = new int[101][101];
+    
+    static {
+        for (int i = 0; i < 101; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+    }
+    
+    static long minWorstCase(int e, int floor) {
+        if (eggs == 1 || floor == 0 || floor == 1 || eggs == 0) {
+            return floor;
+        }
+        if (dp[eggs][floor] != -1) {
+            return dp[eggs][floor];
+        }
+        int minNum = Integer.MAX_VALUE;
+        
+        for (int k = 1; k <= floor; k++) {
+            int broken = minWorstCase(eggs - 1, k - 1);
+            int notBroken = minWorstCase(eggs, floor - k);
+            int worstCase = 1 + Math.max(broken, notBroken);
+            minNum = Math.min(minNum, worstCase);
+        }
+        return dp[eggs][floor] = minNum;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int eggs = sc.nextLong();
+        int floor = sc.nextLong();
+        System.out.println(minWorstCase(eggs, floor));
+    }
+}
+
+
+
+
+
+
+Binary Approach
+---------------------
+
+import java.util.Scanner;
+
+class EggDroppingOptimized {
+    
+    static int eggDrop(int eggs, int floors) {
+        int[][] dp = new int[eggs + 1][floors + 1];
+
+        for (int i = 1; i <= eggs; i++) {
+            dp[i][0] = 0; 
+            dp[i][1] = 1; 
+        }
+        for (int j = 1; j <= floors; j++) {
+            dp[1][j] = j; 
+        }
+
+        for (int i = 2; i <= eggs; i++) {  
+            for (int j = 2; j <= floors; j++) {  
+                int low = 1, high = j, minDrops = Integer.MAX_VALUE;
+
+                while (low <= high) {
+                    int mid = (low + high) / 2;
+                    int breakCase = dp[i - 1][mid - 1]; 
+                    int surviveCase = dp[i][j - mid];   
+                    int worstCase = 1 + Math.max(breakCase, surviveCase);
+
+                    minDrops = Math.min(minDrops, worstCase);
+
+                    if (breakCase > surviveCase) {
+                        high = mid - 1; 
+                    } else {
+                        low = mid + 1; 
+                    }
+                }
+                dp[i][j] = minDrops;
+            }
+        }
+        return dp[eggs][floors];
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int eggs = sc.nextInt(); 
+        int floors = sc.nextInt(); 
+        System.out.println(eggDrop(eggs, floors)); 
+    }
+}
+
